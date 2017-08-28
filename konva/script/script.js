@@ -1,5 +1,47 @@
 window.onload=function()
 {
+    // partie pour afficher les changements des coordonnées et de taille
+    var myDivChange= document.getElementById('stat');
+    function affichage(x,y,w,h,compteur)
+    {
+        var xAffichage=document.createElement('span');// id=" + '">X : ' + x + ' </span><span id="y'+compteur+'">Y : '+y+' </span><span id="w'+compteur+'">Width : ' + w + ' </span><span id="h'+compteur+'">Height : '+h+' </span><br>');
+        xAffichage.setAttribute('id','x'+ compteur);
+        xAffichage.innerHTML='X : '+ x + ' ';
+        myDivChange.appendChild(xAffichage);
+
+        var yAffichage=document.createElement('span');
+        yAffichage.setAttribute('id','y'+compteur);
+        yAffichage.innerHTML='Y : '+y+ ' ';
+        myDivChange.appendChild(yAffichage);
+        
+        var wAffichage=document.createElement('span');
+        wAffichage.setAttribute('id','w'+compteur);
+        wAffichage.innerHTML='W : '+w+ ' ';
+        myDivChange.appendChild(wAffichage);
+        
+        var hAffichage=document.createElement('span');
+        hAffichage.setAttribute('id','h'+compteur);
+        hAffichage.innerHTML='H : '+h+ ' ';
+        myDivChange.appendChild(hAffichage);
+
+        var br=document.createElement('br');
+        myDivChange.appendChild(br);        
+    }
+
+    function change(x,y,w,h,compteur)
+    {
+        var myX=document.getElementById('x'+compteur);
+        var myY=document.getElementById('y'+compteur);
+        var myW=document.getElementById('w'+compteur);
+        var myH=document.getElementById('h'+compteur);
+
+        myX.innerHTML='X : ' + x + ' ';
+        myY.innerHTML='Y : ' + y + ' ';
+        myW.innerHTML='W : ' + w + ' ';
+        myH.innerHTML='H : ' + h + ' ';
+    }
+    // fin de partie juste pour afficher
+
     var stageWidth=500;
     var stageHeight=500;
 
@@ -120,6 +162,87 @@ window.onload=function()
         stage.draw();
     }
 
+    function initRect(x,y,w,h)
+    {
+        var rect=new Konva.Rect({
+            width: w,
+            height: h,
+            fill: 'green',
+            stroke: 'black',
+            strokeWidth: 4,
+        });
+
+        var rectGroup = new Konva.Group({
+            x:x,
+            y:y,
+            draggable:true
+        });
+
+        var form={
+            'numero':compteur,
+            'group': rectGroup,
+            'forme': rect
+        };
+
+        tabForm[compteur]=form;
+
+        form['group'].on('dragmove',function(){
+            var vertTabPosition=this.position();
+            var vertTabTaille=form['forme'];
+            var vert=this.position();
+            change(vert['x'],vert['y'],vertTabTaille.getWidth(),vertTabTaille.getHeight(),form['numero']);
+        });
+
+
+        layer.add(rectGroup);
+        rectGroup.add(rect);
+        addAnchor(rectGroup,0,0,'topLeft');
+        addAnchor(rectGroup,100,0,'topRight');
+        addAnchor(rectGroup,100,50,'bottomRight');
+        addAnchor(rectGroup,0,50,'bottomLeft');
+    }
+
+    function initTriangle(x,y,w,h)
+    {
+        var poly = new Konva.Line({
+            points: [(w/2),0,w,h,w-w,h+h-h],
+            fill: '#00D2FF',
+            stroke: 'black',
+            strokeWidth: 1,
+            closed : true
+          });
+        
+        var rectGroup = new Konva.Group({
+            x:x,
+            y:y,
+            draggable:true
+        });
+
+        var form={
+            'numero':compteur,
+            'group': rectGroup,
+            'forme': poly
+        };
+
+        tabForm[compteur]=form;
+
+        form['group'].on('dragmove',function(){
+            var vertTabPosition=this.position();
+            var vertTabTaille=form['forme'];
+            var vert=this.position();
+            console.log(vert);
+            // change(vert['x'],vert['y'],vertTabTaille.getWidth(),vertTabTaille.getHeight(),form['numero']);
+        });
+
+        layer.add(rectGroup);
+        rectGroup.add(poly);
+    }
+
+    function initRond()
+    {
+
+    }
+
     function detectSubmit()
     {
         var myForme = document.getElementById('formCanvas').value;
@@ -132,59 +255,16 @@ window.onload=function()
             }
             case 'triangle':
             {   
-
+                initTriangle(50,50,50,50);
+                compteur+=1;
+                stage.add(layer);
                 break;
             }
             case 'rect':
             {
-                var rect=new Konva.Rect({
-                    width: 100,
-                    height: 50,
-                    fill: 'green',
-                    stroke: 'black',
-                    strokeWidth: 4,
-                    text:compteur
-                });
-
-                var rectGroup = new Konva.Group({
-                    x:180,
-                    y:50,
-                    draggable:true
-                });
-
-                var form={
-                    'group': rectGroup,
-                    'forme': rect
-                };
-
-                form['group'].on('dragmove',function(){
-                    // console.log(rectGroup.position());
-                    var vertX=document.getElementById('vertX');
-                    var vertY=document.getElementById('vertY');
-                    var vertTabPosition=this.position();
-                    var vertTabTaille=form['forme'];
-                    var vert=this.position();
-                    vertX.innerHTML=vert['x'];
-                    vertY.innerHTML=vert['y'];
-                    vertW.innerHTML=vertTabTaille.getWidth();
-                    vertH.innerHTML=vertTabTaille.getHeight();
-                    vertTabPosition['x']=vert['x'];
-                    vertTabPosition['y']=vert['y'];
-                    // console.log(vert);
-                    console.log(form['forme'].getWidth());
-                });
-
-                tabForm[compteur]=form;
-                console.table(tabForm);
-
-                layer.add(rectGroup);
-                rectGroup.add(rect);
-                addAnchor(rectGroup,0,0,'topLeft');
-                addAnchor(rectGroup,100,0,'topRight');
-                addAnchor(rectGroup,100,50,'bottomRight');
-                addAnchor(rectGroup,0,50,'bottomLeft');
-
-                compteur++;
+                initRect(0,0,100,50);
+                affichage(0,0,100,50,compteur);
+                compteur+=1;
                 stage.add(layer);
                 break;
             }
