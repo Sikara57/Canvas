@@ -1,0 +1,11 @@
+.konvajs-content
+{
+    border:1px solid black;
+}
+
+#test
+{
+    border: 1px solid black;
+    resize: both;
+    overflow:auto;
+}
