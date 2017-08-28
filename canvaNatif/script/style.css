@@ -1,0 +1,79 @@
+section
+{
+    width:950px;
+    margin:auto;
+    border: 1px dotted black;
+    height:900px;
+}
+
+#monCanvas
+{
+    float:left;
+    box-sizing: content-box;
+}
+
+#canvasContainer
+{
+    border: 1px solid black;
+    resize: both;
+    overflow:auto;
+}
+
+#abscisse, #ordonnee
+{
+    display: inline-block;
+    width:100px;
+}
+
+#myForm
+{
+    width:300px;
+    float:left;   
+}
+
+#form
+{
+    border:1px solid black;
+    width:300px;
+    float:left;
+    margin:0 0 0 20px;
+}
+
+ul,li
+{
+    list-style:none;
+}
+
+label
+{
+    display: inline-block;
+    width:120px;
+}
+
+label,input
+{
+    margin-bottom: 10px;
+    margin-top: 10px;
+    margin-left:10px;
+}
+
+select
+{
+    width:147px;
+    margin-left:5px;
+}
+
+img
+{
+    width:100px;
+}
+
+.clear
+{
+    clear:both;
+}
+
+.center
+{
+    text-align: center;
+}
