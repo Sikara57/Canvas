@@ -9,20 +9,26 @@
     <title>Test Konva</title>
 </head>
 <body>
-    <form action="#">
-        <select name="forme" id="formCanvas">
-            <option value="">...</option>
-            <option value="rect">Rectangle</option>
-            <option value="triangle">Triangle</option>
-            <option value="rond">Rond</option>
-        </select>
-    </form>
-
-    <div id="test">
+    <div id="canva">
         <div id="container"></div>
     </div>
     <span id="bleu">Bleu X : <span id="bleuX">0</span> Bleu Y : <span id="bleuY">0</span> Width :<span id="bleuW">0</span> Height : <span id="bleuH">0</span></span>
     <br>
     <span id="vert">Vert X : <span id="vertX">0</span> Vert Y : <span id="vertY">0</span> Width :<span id="vertW">0</span> Height : <span id="vertH">0</span></span>
+
+    <div id="form">
+        <header>
+            <h5>Selection de la forme</h5>
+        </header>
+        <form action="#">
+            <select name="forme" id="formCanvas">
+                <option value="">...</option>
+                <option value="rect">Rectangle</option>
+                <option value="triangle">Triangle</option>
+                <option value="rond">Rond</option>
+            </select>
+        </form>
+        <div class="center"><button id="sub" name="sub">Envoyer</button></div>
+    </div>
 </body>
 </html>

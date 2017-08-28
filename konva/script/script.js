@@ -3,10 +3,14 @@ window.onload=function()
     var stageWidth=500;
     var stageHeight=500;
 
+    var compteur=0;
+
     var tabForm=[];
 
-    var myTest=document.getElementById('test');
-    myTest.addEventListener('mouseup',fitStageIntoParentContainer);
+    var myCanva=document.getElementById('canva');
+    myCanva.addEventListener('mouseup',fitStageIntoParentContainer);
+    var mySubmit = document.getElementById('sub');
+    mySubmit.addEventListener('click',detectSubmit);
 
     var stage = new Konva.Stage({
         container:'container', // id of container 
@@ -14,6 +18,7 @@ window.onload=function()
         height:stageHeight
     });
 
+    // function update forme
     function update(activeAnchor)
     {
         var group = activeAnchor.getParent();
@@ -59,6 +64,7 @@ window.onload=function()
 
     }
 
+    // function add anchor for resize
     function addAnchor(group, x, y, name) {
         var stage = group.getStage();
         var layer = group.getLayer();
@@ -101,30 +107,10 @@ window.onload=function()
         group.add(anchor);
     }
 
-    // create layer
-    var layer=new Konva.Layer();
-
-    var rect = new Konva.Rect({
-        width: 100,
-        height: 50,
-        fill: 'green',
-        stroke: 'black',
-        strokeWidth: 4
-      });
-
-    var rect2 = new Konva.Rect({
-        width: 100,
-        height: 50,
-        fill: 'blue',
-        stroke: 'black',
-        strokeWidth: 4
-    });
-
-
-
+    // update size of canvas in application of resizing window by user
     function fitStageIntoParentContainer()
     {
-        var container = document.querySelector('#test');
+        var container = document.querySelector('#canva');
         // now we need to fit stage into parent
         var containerWidth = container.offsetWidth;
         var containerHeight = container.offsetHeight;
@@ -134,78 +120,85 @@ window.onload=function()
         stage.draw();
     }
 
+    function detectSubmit()
+    {
+        var myForme = document.getElementById('formCanvas').value;
+        switch(myForme)
+        {
+            case 'rond':
+            {
 
-      // add the shape to the layer
-    //   layer.add(rect);
+                break;
+            }
+            case 'triangle':
+            {   
 
-      var rectGroup = new Konva.Group({
-        x:180,
-        y:50,
-        draggable:true
-      });
+                break;
+            }
+            case 'rect':
+            {
+                var rect=new Konva.Rect({
+                    width: 100,
+                    height: 50,
+                    fill: 'green',
+                    stroke: 'black',
+                    strokeWidth: 4,
+                    text:compteur
+                });
 
-    var form1={
-        'group': rectGroup,
-        'forme': rect
-    };
+                var rectGroup = new Konva.Group({
+                    x:180,
+                    y:50,
+                    draggable:true
+                });
 
-    var rectGroup2 = new Konva.Group({
-        x:5,
-        y:25,
-        draggable:true
-    })
+                var form={
+                    'group': rectGroup,
+                    'forme': rect
+                };
 
-    var form2={
-        'group': rectGroup2,
-        'forme': rect2
-    };
+                form['group'].on('dragmove',function(){
+                    // console.log(rectGroup.position());
+                    var vertX=document.getElementById('vertX');
+                    var vertY=document.getElementById('vertY');
+                    var vertTabPosition=this.position();
+                    var vertTabTaille=form['forme'];
+                    var vert=this.position();
+                    vertX.innerHTML=vert['x'];
+                    vertY.innerHTML=vert['y'];
+                    vertW.innerHTML=vertTabTaille.getWidth();
+                    vertH.innerHTML=vertTabTaille.getHeight();
+                    vertTabPosition['x']=vert['x'];
+                    vertTabPosition['y']=vert['y'];
+                    // console.log(vert);
+                    console.log(form['forme'].getWidth());
+                });
 
-    tabform=[form1,form2];
-    // console.log(tabform[1].width());
+                tabForm[compteur]=form;
+                console.table(tabForm);
 
-    rectGroup.on('dragmove',function(){
-        // console.log(rectGroup.position());
-        var vertX=document.getElementById('vertX');
-        var vertY=document.getElementById('vertY');
-        var vertTabPosition=tabform[1]['group'].position();
-        var vertTabTaille=tabform[1]['forme'];
-        var vert=rectGroup.position();
-        vertX.innerHTML=vert['x'];
-        vertY.innerHTML=vert['y'];
-        vertW.innerHTML=vertTabTaille.getWidth();
-        vertH.innerHTML=vertTabTaille.getHeight();
-        vertTabPosition['x']=vert['x'];
-        vertTabPosition['y']=vert['y'];
-    });
+                layer.add(rectGroup);
+                rectGroup.add(rect);
+                addAnchor(rectGroup,0,0,'topLeft');
+                addAnchor(rectGroup,100,0,'topRight');
+                addAnchor(rectGroup,100,50,'bottomRight');
+                addAnchor(rectGroup,0,50,'bottomLeft');
 
-    rectGroup2.on('dragmove',function(){
-        // console.log(rectGroup2.position());
-        var bleuX=document.getElementById('bleuX');
-        var bleuY=document.getElementById('bleuY');
-        var bleu=rectGroup2.position();
-        bleuX.innerHTML=bleu['x'];
-        bleuY.innerHTML=bleu['y'];
-        bleuW.innerHTML=rect2.getWidth();
-        bleuH.innerHTML=rect2.getHeight();
-    });
+                compteur++;
+                stage.add(layer);
+                break;
+            }
+        }
 
-    
-    layer.add(rectGroup);
-    rectGroup.add(rect);
-    addAnchor(rectGroup,0,0,'topLeft');
-    addAnchor(rectGroup,100,0,'topRight');
-    addAnchor(rectGroup,100,50,'bottomRight');
-    addAnchor(rectGroup,0,50,'bottomLeft');
+    }
 
-    layer.add(rectGroup2);
-    rectGroup2.add(rect2);
-    addAnchor(rectGroup2,0,0,'topLeft');
-    addAnchor(rectGroup2,100,0,'topRight');
-    addAnchor(rectGroup2,100,50,'bottomRight');
-    addAnchor(rectGroup2,0,50,'bottomLeft');
 
-      // add the layer to the stage
-      stage.add(layer);
+    fitStageIntoParentContainer();
 
-      fitStageIntoParentContainer();
+    // create layer
+    var layer=new Konva.Layer();
+
+    // add the layer to the stage
+    stage.add(layer);
+
 }

@@ -3,9 +3,25 @@
     border:1px solid black;
 }
 
-#test
+.center
+{
+    margin-top:30px;
+    text-align: center;
+}
+
+#canva
 {
     border: 1px solid black;
     resize: both;
     overflow:auto;
+}
+
+#form
+{
+    margin-top:20px;
+    border:1px solid black;
+    margin:auto;
+    padding: 25px;
+    width:250px;
+    height:200px;
 }
