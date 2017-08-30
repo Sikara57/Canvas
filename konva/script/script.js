@@ -121,32 +121,58 @@ window.onload=function()
             draggable: true,
             dragOnTop: false
         });
-        anchor.on('dragmove', function() {
-            update(this);
-            layer.draw();
-        });
-        anchor.on('mousedown touchstart', function() {
-            group.setDraggable(false);
-            this.moveToTop();
-        });
-        anchor.on('dragend', function() {
-            group.setDraggable(true);
-            layer.draw();
-        });
-        // add hover styling
-        anchor.on('mouseover', function() {
-            var layer = this.getLayer();
-            document.body.style.cursor = 'pointer';
-            this.setStrokeWidth(4);
-            layer.draw();
-        });
-        anchor.on('mouseout', function() {
-            var layer = this.getLayer();
-            document.body.style.cursor = 'default';
-            this.setStrokeWidth(2);
-            layer.draw();
-        });
-        group.add(anchor);
+
+        if (name=='triangle')
+        {
+            var triangle=group.get('.triangle')[0];
+            var image=group.get('Line')[0];
+            // alert('prout');
+            anchor.on('dragmove', function() {
+                // console.log(group);
+                image.scale({x:2,y:2});
+                // layer.draw();
+            });
+
+            anchor.on('dragend', function() {
+                group.setDraggable(true);
+                layer.draw();
+            });
+
+            anchor.on('mousedown touchstart', function() {
+                group.setDraggable(false);
+                this.moveToTop();
+            });
+        }
+        else
+        {
+
+            anchor.on('dragmove', function() {
+                update(this);
+                layer.draw();
+            });
+            anchor.on('mousedown touchstart', function() {
+                group.setDraggable(false);
+                this.moveToTop();
+            });
+            anchor.on('dragend', function() {
+                group.setDraggable(true);
+                layer.draw();
+            });
+            // add hover styling
+            anchor.on('mouseover', function() {
+                var layer = this.getLayer();
+                document.body.style.cursor = 'pointer';
+                this.setStrokeWidth(4);
+                layer.draw();
+            });
+            anchor.on('mouseout', function() {
+                var layer = this.getLayer();
+                document.body.style.cursor = 'default';
+                this.setStrokeWidth(2);
+                layer.draw();
+            });
+        }
+            group.add(anchor);
     }
 
     // update size of canvas in application of resizing window by user
@@ -161,6 +187,7 @@ window.onload=function()
         stage.height(containerHeight-4);
         stage.draw();
     }
+
 
     function initRect(x,y,w,h)
     {
@@ -204,6 +231,7 @@ window.onload=function()
 
     function initTriangle(x,y,w,h)
     {
+        var angleDiff=0;
         var poly = new Konva.Line({
             points: [(w/2),0,w,h,w-w,h+h-h],
             fill: '#00D2FF',
@@ -230,12 +258,19 @@ window.onload=function()
             var vertTabPosition=this.position();
             var vertTabTaille=form['forme'];
             var vert=this.position();
-            console.log(vert);
+            // console.log(vert);
             // change(vert['x'],vert['y'],vertTabTaille.getWidth(),vertTabTaille.getHeight(),form['numero']);
         });
 
+        rectGroup.on('click',function(){
+            angleDiff += 90;
+            poly.rotation(angleDiff);
+        });
+
+        
         layer.add(rectGroup);
         rectGroup.add(poly);
+        addAnchor(rectGroup,x,y,'triangle');
     }
 
     function initRond()
