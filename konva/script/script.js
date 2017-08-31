@@ -2,11 +2,11 @@ window.onload=function()
 {
     // partie pour afficher les changements des coordonnées et de taille
     var myDivChange= document.getElementById('stat');
-    function affichage(x,y,w,h,compteur)
+    function affichage(forme,x,y,w,h,compteur)
     {
         var xAffichage=document.createElement('span');// id=" + '">X : ' + x + ' </span><span id="y'+compteur+'">Y : '+y+' </span><span id="w'+compteur+'">Width : ' + w + ' </span><span id="h'+compteur+'">Height : '+h+' </span><br>');
         xAffichage.setAttribute('id','x'+ compteur);
-        xAffichage.innerHTML='X : '+ x + ' ';
+        xAffichage.innerHTML=forme+compteur+' X : '+ x + ' ';
         myDivChange.appendChild(xAffichage);
 
         var yAffichage=document.createElement('span');
@@ -28,14 +28,14 @@ window.onload=function()
         myDivChange.appendChild(br);        
     }
 
-    function change(x,y,w,h,compteur)
+    function change(forme,x,y,w,h,compteur)
     {
         var myX=document.getElementById('x'+compteur);
         var myY=document.getElementById('y'+compteur);
         var myW=document.getElementById('w'+compteur);
         var myH=document.getElementById('h'+compteur);
 
-        myX.innerHTML='X : ' + x + ' ';
+        myX.innerHTML=forme+compteur+' X : ' + x + ' ';
         myY.innerHTML='Y : ' + y + ' ';
         myW.innerHTML='W : ' + w + ' ';
         myH.innerHTML='H : ' + h + ' ';
@@ -61,7 +61,7 @@ window.onload=function()
     });
 
     // function update forme
-    function update(activeAnchor)
+    function update(activeAnchor,x,y)
     {
         var group = activeAnchor.getParent();
         var topLeft = group.get('.topLeft')[0];
@@ -69,6 +69,7 @@ window.onload=function()
         var bottomRight = group.get('.bottomRight')[0];
         var bottomLeft = group.get('.bottomLeft')[0];
         var image = group.get('Rect')[0];
+        var triangle=group.get('.triangle1')[0];
 
         var anchorX = activeAnchor.getX();
         var anchorY = activeAnchor.getY();
@@ -90,19 +91,29 @@ window.onload=function()
                 bottomRight.setY(anchorY);
                 topLeft.setX(anchorX);
                 break;
+            case 'triangle':
+                var image=group.get('Line')[0];
+                var scaleWidth = anchorX/x;
+                var scaleHeight = anchorY/y;
+                image.scale({x:scaleWidth,y:scaleHeight});
+                layer.draw()
+                break;
         }
 
-        image.position(topLeft.position());
-
-
-        var width=topRight.getX() - topLeft.getX();
-        var height = bottomLeft.getY() - topLeft.getY();
-
-        if(width && height)
+        if(activeAnchor.getName()!='triangle')
         {
-            image.width(width);
-            image.height(height);
+            image.position(topLeft.position());
+    
+            var width=topRight.getX() - topLeft.getX();
+            var height = bottomLeft.getY() - topLeft.getY();
+    
+            if(width && height)
+            {
+                image.width(width);
+                image.height(height);
+            }
         }
+
 
     }
 
@@ -124,13 +135,8 @@ window.onload=function()
 
         if (name=='triangle')
         {
-            var triangle=group.get('.triangle')[0];
-            var image=group.get('Line')[0];
-            // alert('prout');
             anchor.on('dragmove', function() {
-                // console.log(group);
-                image.scale({x:2,y:2});
-                // layer.draw();
+                update(this,x,y);
             });
 
             anchor.on('dragend', function() {
@@ -142,6 +148,7 @@ window.onload=function()
                 group.setDraggable(false);
                 this.moveToTop();
             });
+
         }
         else
         {
@@ -217,7 +224,7 @@ window.onload=function()
             var vertTabPosition=this.position();
             var vertTabTaille=form['forme'];
             var vert=this.position();
-            change(vert['x'],vert['y'],vertTabTaille.getWidth(),vertTabTaille.getHeight(),form['numero']);
+            change('Rectangle',vert['x'],vert['y'],vertTabTaille.getWidth(),vertTabTaille.getHeight(),form['numero']);
         });
 
 
@@ -249,7 +256,9 @@ window.onload=function()
         var form={
             'numero':compteur,
             'group': rectGroup,
-            'forme': poly
+            'forme': poly,
+            'width':w,
+            'height':h
         };
 
         tabForm[compteur]=form;
@@ -258,13 +267,13 @@ window.onload=function()
             var vertTabPosition=this.position();
             var vertTabTaille=form['forme'];
             var vert=this.position();
-            // console.log(vert);
-            // change(vert['x'],vert['y'],vertTabTaille.getWidth(),vertTabTaille.getHeight(),form['numero']);
+            // console.log(vertTabTaille.scaleX());
+            change('Triangle',vert['x'],vert['y'],Math.abs(vertTabTaille.scaleX()*form['width']),Math.abs(vertTabTaille.scaleY()*form['height']),form['numero']);
         });
 
         rectGroup.on('click',function(){
             angleDiff += 90;
-            poly.rotation(angleDiff);
+            rectGroup.rotation(angleDiff);
         });
 
         
@@ -291,6 +300,7 @@ window.onload=function()
             case 'triangle':
             {   
                 initTriangle(50,50,50,50);
+                affichage('Triangle',50,50,50,50,compteur);
                 compteur+=1;
                 stage.add(layer);
                 break;
@@ -298,7 +308,7 @@ window.onload=function()
             case 'rect':
             {
                 initRect(0,0,100,50);
-                affichage(0,0,100,50,compteur);
+                affichage('Rectangle',0,0,100,50,compteur);
                 compteur+=1;
                 stage.add(layer);
                 break;
