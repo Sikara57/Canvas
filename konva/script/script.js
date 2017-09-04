@@ -70,6 +70,7 @@ window.onload=function()
         var bottomLeft = group.get('.bottomLeft')[0];
         var image = group.get('Rect')[0];
         var triangle=group.get('.triangle1')[0];
+        var rond1 = group.get('.rond1')[0];
 
         var anchorX = activeAnchor.getX();
         var anchorY = activeAnchor.getY();
@@ -96,11 +97,19 @@ window.onload=function()
                 var scaleWidth = anchorX/x;
                 var scaleHeight = anchorY/y;
                 image.scale({x:scaleWidth,y:scaleHeight});
-                layer.draw()
+                layer.draw();
+                break;
+            case 'rond1' :
+                var image = group.get('Circle')[0];
+                var scaleWidth = anchorX/x;
+                rond1.setX(anchorX);
+                rond1.setY(y);
+                image.scale({x:scaleWidth});
+                layer.draw();
                 break;
         }
 
-        if(activeAnchor.getName()!='triangle')
+        if((activeAnchor.getName()!='triangle')&&(activeAnchor.getName()!='rond1')&&(activeAnchor.getName()!='rond2'))
         {
             image.position(topLeft.position());
     
@@ -149,6 +158,23 @@ window.onload=function()
                 this.moveToTop();
             });
 
+        }
+        else if (name=='rond1')
+        {
+            anchor.on('dragmove', function() {
+                update(this,x,y);
+                layer.draw();
+            });
+
+            anchor.on('dragend', function() {
+                group.setDraggable(true);
+                layer.draw();
+            });
+
+            anchor.on('mousedown touchstart', function() {
+                group.setDraggable(false);
+                this.moveToTop();
+            });
         }
         else
         {
@@ -282,9 +308,42 @@ window.onload=function()
         addAnchor(rectGroup,x,y,'triangle');
     }
 
-    function initRond()
+    function initRond(x,y,r)
     {
+        var circle = new Konva.Circle({
+            x:x,
+            y:y,
+            radius:r,
+            fill : 'red',
+            stroke : 'black',
+            strokeWidth : 1
+        });
 
+        var rectGroup = new Konva.Group({
+            x:x,
+            y:y,
+            draggable:true
+        });
+
+        var form = {
+            'numero': compteur,
+            'group': rectGroup,
+            'forme': circle
+        };
+
+        tabForm[compteur] = form;
+
+        form['group'].on('dragmove',function(){
+            var vertTabPosition=this.position();
+            var vertTabTaille=form['forme'];
+            var vert=this.position();
+            // console.log(vertTabTaille.scaleX());
+            //change('Triangle',vert['x'],vert['y'],Math.abs(vertTabTaille.scaleX()*form['width']),Math.abs(vertTabTaille.scaleY()*form['height']),form['numero']);
+        });
+
+        layer.add(rectGroup);
+        rectGroup.add(circle);
+        addAnchor(rectGroup,x+r,y,'rond1');
     }
 
     function detectSubmit()
@@ -294,7 +353,9 @@ window.onload=function()
         {
             case 'rond':
             {
-
+                initRond(50,50,20);
+                compteur+=1;
+                stage.add(layer);
                 break;
             }
             case 'triangle':
@@ -303,6 +364,10 @@ window.onload=function()
                 affichage('Triangle',50,50,50,50,compteur);
                 compteur+=1;
                 stage.add(layer);
+                break;
+            }
+            case 'triangle_rectangle':
+            {
                 break;
             }
             case 'rect':
